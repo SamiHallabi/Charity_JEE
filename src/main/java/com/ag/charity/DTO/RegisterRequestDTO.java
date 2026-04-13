@@ -8,7 +8,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 import jakarta.validation.constraints.NotBlank;
 
 @Data
-public class UserRegistrationRequest {
+public class RegisterRequestDTO {
     @NotBlank(message = "First name is required")
     private String firstName;
 
@@ -23,6 +23,5 @@ public class UserRegistrationRequest {
     @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
 
-    @NotNull
-    private Role role;
+
 }

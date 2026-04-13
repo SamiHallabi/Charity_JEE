@@ -1,13 +1,18 @@
 package com.ag.charity.service;
 
-import com.ag.charity.repositories.jpa.UserRepository;
+import com.ag.charity.DTO.RegisterRequestDTO;
+import com.ag.charity.DTO.UpdateProfileDTO;
+import com.ag.charity.DTO.UserResponseDTO;
 import org.springframework.stereotype.Service;
 
-@Service
-public class UserService {
-    private final UserRepository userRepository;
+import java.util.List;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+@Service
+public interface UserService {
+    UserResponseDTO register(RegisterRequestDTO dto);
+    UserResponseDTO getUserById(Long id);
+    UserResponseDTO updateProfile(Long id, UpdateProfileDTO dto);
+    void deleteUser(Long id);
+    List<UserResponseDTO> getAllUsers();
+
 }

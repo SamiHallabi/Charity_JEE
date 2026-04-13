@@ -1,7 +1,7 @@
 package com.ag.charity.controller;
 
 
-import com.ag.charity.DTO.UserRegistrationRequest;
+
 import com.ag.charity.entities.jpa.User;
 import com.ag.charity.repositories.jpa.UserRepository;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +18,6 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("/register")
-    public String registerUser(@RequestBody UserRegistrationRequest request) {
-        return ResponseEntity.ok(userService.registerUser(request));
 
-    }
 
 }
