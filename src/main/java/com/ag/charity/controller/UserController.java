@@ -1,10 +1,8 @@
 package com.ag.charity.controller;
 
-
 import com.ag.charity.DTO.RegisterRequestDTO;
 import com.ag.charity.DTO.UpdateProfileDTO;
 import com.ag.charity.DTO.UserResponseDTO;
-import com.ag.charity.repositories.jpa.UserRepository;
 import com.ag.charity.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
