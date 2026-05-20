@@ -1,0 +1,22 @@
+/* ── Global ──────────────────────────── */
+body { background-color: #f8f9fa; }
+
+/* ── Action Cards ────────────────────── */
+.action-card { transition: transform .2s, box-shadow .2s; border: none; }
+.action-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.12); }
+
+/* ── Progress bars ───────────────────── */
+.progress { height: 10px; border-radius: 8px; }
+
+/* ── Category badge ──────────────────── */
+.badge-category { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; }
+
+/* ── Hero section ────────────────────── */
+.hero-section {
+    background: linear-gradient(135deg, #198754 0%, #0d6efd 100%);
+    color: white;
+    padding: 80px 0;
+}
+
+/* ── Stat cards ──────────────────────── */
+.stat-card { border-left: 4px solid #198754; }

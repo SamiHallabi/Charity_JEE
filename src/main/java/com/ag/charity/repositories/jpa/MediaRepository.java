@@ -1,0 +1,13 @@
+package com.ag.charity.repositories.jpa;
+
+import com.ag.charity.entities.jpa.Media;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface MediaRepository extends JpaRepository<Media, Long> {
+
+    List<Media> findByCharityActionId(Long charityActionId);
+}

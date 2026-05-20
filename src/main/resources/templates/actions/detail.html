@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{layout :: head('Détail action')}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<div class="container py-5">
+
+    <div th:if="${param.donated}" class="alert alert-success">Merci pour votre don ! Votre paiement a été confirmé.</div>
+    <div th:if="${param.cancelled}" class="alert alert-warning">Paiement annulé. Vous pouvez réessayer à tout moment.</div>
+    <div th:if="${param.participated}" class="alert alert-success">Vous participez maintenant à cette action !</div>
+    <div th:if="${param.uploaded}" class="alert alert-success">Média ajouté avec succès.</div>
+
+    <div class="row g-4">
+        <!-- Main content -->
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-body p-4">
+                    <div class="mb-2">
+                        <span class="badge bg-success badge-category"
+                              th:text="${action.category}">CAT</span>
+                        <span class="badge ms-1"
+                              th:classappend="${action.status.name() == 'ACTIVE'} ? 'bg-success' : 'bg-secondary'"
+                              th:text="${action.status}">STATUS</span>
+                    </div>
+                    <h2 class="fw-bold" th:text="${action.title}">Titre</h2>
+                    <p class="text-muted">
+                        <i class="bi bi-building me-1"></i>
+                        <span th:text="${action.organizationName}">Org</span>
+                    </p>
+                    <p th:if="${action.location}">
+                        <i class="bi bi-geo-alt me-1 text-success"></i>
+                        <span th:text="${action.location}">Lieu</span>
+                    </p>
+                    <p th:if="${action.eventDate}">
+                        <i class="bi bi-calendar me-1 text-success"></i>
+                        <span th:text="${#temporals.format(action.eventDate, 'dd MMMM yyyy', new java.util.Locale('fr'))}">date</span>
+                    </p>
+                    <hr/>
+                    <p class="lead" th:text="${action.description}">Description</p>
+                </div>
+            </div>
+
+            <!-- Media gallery -->
+            <div class="card shadow mb-4" th:if="${medias != null and !medias.isEmpty()}">
+                <div class="card-header fw-semibold">
+                    <i class="bi bi-images me-2"></i>Médias
+                </div>
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-md-4" th:each="m : ${medias}">
+                            <img th:if="${m.type.name() == 'IMAGE'}"
+                                 th:src="${m.url}" class="img-fluid rounded" alt="media"/>
+                            <video th:if="${m.type.name() == 'VIDEO'}"
+                                   th:src="${m.url}" class="w-100 rounded" controls></video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload media (org admin only) -->
+            <div class="card shadow mb-4" sec:authorize="hasRole('ADMIN_ORG')">
+                <div class="card-header fw-semibold">
+                    <i class="bi bi-cloud-upload me-2"></i>Ajouter un média
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/org/actions/{id}/upload(id=${action.id})}"
+                          method="post" enctype="multipart/form-data" class="d-flex gap-2">
+                        <input type="file" name="file" class="form-control" accept="image/*,video/*"/>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-upload"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Recent donors -->
+            <div class="card shadow" th:if="${donations != null and !donations.isEmpty()}">
+                <div class="card-header fw-semibold">
+                    <i class="bi bi-people me-2"></i>Derniers donateurs
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between"
+                        th:each="d : ${donations}">
+                        <span th:text="${d.userFullName}">Nom</span>
+                        <span class="fw-bold text-success" th:text="${d.amount} + ' MAD'">0</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Progress card -->
+            <div class="card shadow mb-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold text-success">Collecte de fonds</h5>
+                    <div class="display-6 fw-bold"
+                         th:text="${action.amountCollected} + ' MAD'">0 MAD</div>
+                    <p class="text-muted mb-2">
+                        sur <span th:text="${action.fundraisingGoal} + ' MAD'">0</span>
+                    </p>
+                    <div class="progress mb-2">
+                        <div class="progress-bar bg-success"
+                             th:style="'width:' + ${action.progressPercent} + '%'"
+                             role="progressbar"></div>
+                    </div>
+                    <small class="text-muted" th:text="${action.progressPercent} + '% atteint'">0%</small>
+                </div>
+            </div>
+
+            <!-- Donate -->
+            <div class="card shadow mb-4" sec:authorize="hasRole('USER')">
+                <div class="card-header fw-semibold text-white bg-success">
+                    <i class="bi bi-heart-fill me-2"></i>Faire un don
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="@{/actions/{id}/donate(id=${action.id})}"
+                          th:object="${donationForm}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Montant (MAD)</label>
+                            <input type="number" th:field="*{amount}" class="form-control"
+                                   min="1" step="0.01" placeholder="100"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Méthode de paiement</label>
+                            <select th:field="*{paymentMethod}" class="form-select">
+                                <option value="CARD">Carte bancaire</option>
+                                <option value="PAYPAL">PayPal</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-gift me-2"></i>Donner maintenant
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Participate -->
+            <div class="card shadow" sec:authorize="hasRole('USER')">
+                <div class="card-body p-4 text-center">
+                    <div th:if="${isParticipating}">
+                        <i class="bi bi-check-circle-fill text-success display-5"></i>
+                        <p class="mt-2 fw-semibold">Vous participez à cette action</p>
+                    </div>
+                    <div th:unless="${isParticipating}">
+                        <p class="text-muted">Participez bénévolement à cette action.</p>
+                        <form th:action="@{/actions/{id}/participate(id=${action.id})}" method="post">
+                            <button type="submit" class="btn btn-outline-success w-100">
+                                <i class="bi bi-people me-2"></i>Je participe
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Not logged in -->
+            <div class="card shadow" sec:authorize="!isAuthenticated()">
+                <div class="card-body text-center p-4">
+                    <p class="text-muted">Connectez-vous pour donner ou participer.</p>
+                    <a th:href="@{/auth/login}" class="btn btn-success w-100">Se connecter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Action caritative')}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white fw-semibold">
+                    <i class="bi bi-plus-circle me-2" th:if="${action == null}"></i>
+                    <i class="bi bi-pencil me-2" th:unless="${action == null}"></i>
+                    <span th:if="${action == null}">Créer une action caritative</span>
+                    <span th:unless="${action == null}">Modifier l'action</span>
+                </div>
+                <div class="card-body p-4">
+                    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+                    <!-- CREATE FORM -->
+                    <form th:if="${action == null}"
+                          th:action="@{/org/actions/create}"
+                          th:object="${actionForm}" method="post">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Titre *</label>
+                                <input type="text" th:field="*{title}" class="form-control"
+                                       th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'" required/>
+                                <div class="invalid-feedback" th:errors="*{title}"></div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Description</label>
+                                <textarea th:field="*{description}" class="form-control" rows="4"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Catégorie *</label>
+                                <select th:field="*{category}" class="form-select" required>
+                                    <option value="">— Choisir —</option>
+                                    <option th:each="cat : ${categories}" th:value="${cat}"
+                                            th:text="${cat}">CAT</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Objectif (MAD) *</label>
+                                <input type="number" th:field="*{fundraisingGoal}" class="form-control"
+                                       min="1" step="0.01" required/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Date de l'événement</label>
+                                <input type="date" th:field="*{eventDate}" class="form-control"/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Lieu</label>
+                                <input type="text" th:field="*{location}" class="form-control"/>
+                            </div>
+                            <div class="col-12 d-flex gap-2">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle me-2"></i>Créer l'action
+                                </button>
+                                <a th:href="@{/org/actions}" class="btn btn-outline-secondary">Annuler</a>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- EDIT FORM -->
+                    <form th:unless="${action == null}"
+                          th:action="@{/org/actions/{id}/edit(id=${action.id})}"
+                          th:object="${updateForm}" method="post">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Titre</label>
+                                <input type="text" th:field="*{title}" class="form-control"
+                                       th:placeholder="${action.title}"/>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Description</label>
+                                <textarea th:field="*{description}" class="form-control" rows="4"
+                                          th:placeholder="${action.description}"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Catégorie</label>
+                                <select th:field="*{category}" class="form-select">
+                                    <option value="">— Conserver actuelle —</option>
+                                    <option th:each="cat : ${categories}" th:value="${cat}"
+                                            th:text="${cat}"
+                                            th:selected="${cat == action.category}">CAT</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Objectif (MAD)</label>
+                                <input type="number" th:field="*{fundraisingGoal}" class="form-control"
+                                       th:placeholder="${action.fundraisingGoal}" min="1" step="0.01"/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Date de l'événement</label>
+                                <input type="date" th:field="*{eventDate}" class="form-control"
+                                       th:value="${action.eventDate}"/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Lieu</label>
+                                <input type="text" th:field="*{location}" class="form-control"
+                                       th:placeholder="${action.location}"/>
+                            </div>
+                            <div class="col-12 d-flex gap-2">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle me-2"></i>Enregistrer
+                                </button>
+                                <a th:href="@{/org/actions}" class="btn btn-outline-secondary">Annuler</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

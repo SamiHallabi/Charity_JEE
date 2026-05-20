@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Mon Profil')}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+
+            <div th:if="${param.updated}" class="alert alert-success alert-dismissible fade show">
+                Profil mis à jour avec succès.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <!-- Profile card -->
+            <div class="card shadow mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-success text-white rounded-circle d-flex align-items-center
+                                    justify-content-center me-4 flex-shrink-0"
+                             style="width:72px;height:72px;font-size:2rem;">
+                            <span th:text="${user.firstName != null ? user.firstName.substring(0,1).toUpperCase() : '?'}">U</span>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold mb-0" th:text="${user.firstName + ' ' + user.lastName}">Nom</h4>
+                            <p class="text-muted mb-1" th:text="${user.email}">email</p>
+                            <span class="badge bg-success" th:text="${user.role}">USER</span>
+                        </div>
+                    </div>
+                    <small class="text-muted" th:if="${user.createdAt != null}">
+                        Membre depuis <span th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy')}">date</span>
+                    </small>
+                </div>
+            </div>
+
+            <!-- Edit form -->
+            <div class="card shadow mb-5">
+                <div class="card-header bg-success text-white fw-semibold">
+                    <i class="bi bi-pencil me-2"></i>Modifier mon profil
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="@{/user/profile/update}" th:object="${updateForm}" method="post">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Prénom</label>
+                                <input type="text" th:field="*{firstName}" class="form-control"
+                                       th:placeholder="${user.firstName}"/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Nom</label>
+                                <input type="text" th:field="*{lastName}" class="form-control"
+                                       th:placeholder="${user.lastName}"/>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Nouveau mot de passe</label>
+                                <input type="password" th:field="*{password}" class="form-control"
+                                       placeholder="Laisser vide pour ne pas changer"/>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle me-2"></i>Enregistrer
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Donation history -->
+            <h5 class="fw-bold mb-3"><i class="bi bi-gift me-2 text-success"></i>Historique des dons</h5>
+
+            <div th:if="${donations == null or donations.isEmpty()}"
+                 class="alert alert-light border text-center text-muted py-4">
+                <i class="bi bi-heart display-6 d-block mb-2"></i>
+                Vous n'avez pas encore effectué de don.
+                <div class="mt-2">
+                    <a th:href="@{/explore}" class="btn btn-sm btn-success">Découvrir des actions</a>
+                </div>
+            </div>
+
+            <div class="card shadow" th:unless="${donations == null or donations.isEmpty()}">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-success">
+                            <tr>
+                                <th>Action</th>
+                                <th>Montant</th>
+                                <th>Statut</th>
+                                <th>Référence</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="don : ${donations}">
+                                <td>
+                                    <a th:href="@{/actions/{id}(id=${don.charityActionId})}"
+                                       class="text-decoration-none fw-semibold"
+                                       th:text="${don.charityActionTitle}">Action</a>
+                                </td>
+                                <td class="fw-bold text-success" th:text="${don.amount} + ' MAD'">0 MAD</td>
+                                <td>
+                                    <span class="badge"
+                                          th:classappend="${don.status.name() == 'COMPLETED'} ? 'bg-success' : 'bg-warning text-dark'"
+                                          th:text="${don.status}">STATUS</span>
+                                </td>
+                                <td><code th:text="${don.transactionId}">TXN</code></td>
+                                <td th:text="${don.donationDate != null ? #temporals.format(don.donationDate, 'dd/MM/yyyy HH:mm') : '-'}">date</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

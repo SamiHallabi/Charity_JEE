@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Inscription Organisation')}"></head>
+<body class="bg-light">
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h3 class="card-title text-center fw-bold mb-2">
+                        <i class="bi bi-building-fill text-success me-2"></i>Enregistrer mon organisation
+                    </h3>
+                    <p class="text-center text-muted mb-4 small">
+                        Votre inscription sera validée manuellement par un administrateur.
+                    </p>
+
+                    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+                    <form th:action="@{/auth/register-org}" th:object="${orgForm}" method="post">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Nom de l'organisation</label>
+                                <input type="text" th:field="*{orgName}" class="form-control" required/>
+                                <div class="invalid-feedback" th:errors="*{orgName}"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Email</label>
+                                <input type="email" th:field="*{orgEmail}" class="form-control" required/>
+                                <div class="invalid-feedback" th:errors="*{orgEmail}"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Mot de passe</label>
+                                <input type="password" th:field="*{orgPassword}" class="form-control"
+                                       placeholder="Minimum 8 caractères" required/>
+                                <div class="invalid-feedback" th:errors="*{orgPassword}"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Numéro fiscal (Tax ID)</label>
+                                <input type="text" th:field="*{taxId}" class="form-control" required/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Adresse légale</label>
+                                <input type="text" th:field="*{legalAddress}" class="form-control" required/>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Description de la mission</label>
+                                <textarea th:field="*{orgDescription}" class="form-control" rows="3"
+                                          placeholder="Décrivez votre organisation…"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="bi bi-send me-2"></i>Soumettre la demande
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

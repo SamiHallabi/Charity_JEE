@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Profil Organisation')}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<div class="container py-5">
+    <div th:if="${param.updated}" class="alert alert-success">Profil mis à jour avec succès.</div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card shadow text-center p-4">
+                <div class="mx-auto mb-3">
+                    <img th:if="${org.logoUrl}" th:src="${org.logoUrl}"
+                         class="rounded-circle" width="100" height="100" alt="logo"/>
+                    <div th:unless="${org.logoUrl}"
+                         class="bg-success text-white rounded-circle d-flex align-items-center
+                                justify-content-center mx-auto"
+                         style="width:100px;height:100px;font-size:2.5rem;">
+                        <i class="bi bi-building"></i>
+                    </div>
+                </div>
+                <h4 class="fw-bold" th:text="${org.orgName}">Org</h4>
+                <p class="text-muted" th:text="${org.orgEmail}">email</p>
+                <span class="badge"
+                      th:classappend="${org.status.name() == 'APPROVED'} ? 'bg-success' :
+                                      (${org.status.name() == 'PENDING'} ? 'bg-warning' : 'bg-danger')"
+                      th:text="${org.status}">STATUS</span>
+                <div class="mt-3">
+                    <a th:href="@{/org/actions}" class="btn btn-outline-success btn-sm w-100">
+                        <i class="bi bi-list-ul me-1"></i>Mes actions
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white fw-semibold">
+                    <i class="bi bi-pencil me-2"></i>Modifier le profil
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="@{/org/profile/update}" th:object="${updateForm}" method="post">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Nom de l'organisation</label>
+                                <input type="text" th:field="*{orgName}" class="form-control"
+                                       th:placeholder="${org.orgName}"/>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Description</label>
+                                <textarea th:field="*{orgDescription}" class="form-control" rows="4"
+                                          th:placeholder="${org.orgDescription}"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" th:field="*{orgEmail}" class="form-control"
+                                       th:placeholder="${org.orgEmail}"/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Adresse légale</label>
+                                <input type="text" th:field="*{legalAddress}" class="form-control"
+                                       th:placeholder="${org.legalAddress}"/>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Nouveau mot de passe</label>
+                                <input type="password" th:field="*{orgPassword}" class="form-control"
+                                       placeholder="Laisser vide pour ne pas changer"/>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle me-2"></i>Enregistrer
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>
