@@ -1,0 +1,9 @@
+uploads/
+.git/
+.idea/
+target/
+.mvn/
+node_modules/
+*.log
+.DS_Store
+
